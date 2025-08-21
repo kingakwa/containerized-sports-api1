@@ -14,8 +14,8 @@ This project demonstrates building a containerized API management system for que
 ---
 
 ## **Prerequisites**
-- **Sports API Key**: Sign up for a free account and subscription & obtain your API Key at serpapi.com
-- **AWS Account**: Create an AWS Account & have basic understanding of ECS, API Gateway, Docker & Python
+- **Sports API Key**: Sign up for a free account and subscription & obtain your API Key at `serpapi.com`
+- **AWS Account**: Create an AWS Account & have basic understanding of `ECS`, `API Gateway`, `Docker` & `Python`
 - **AWS CLI Installed and Configured**: Install & configure AWS CLI to programatically interact with AWS
 - **Serpapi Library**: Install Serpapi library in local environment "pip install google-search-results"
 - **Docker CLI and Desktop Installed**: To build & push container images
@@ -70,12 +70,21 @@ docker tag sports-api:latest <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/sp
 docker push <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/sports-api:sports-api-latest
 ```
 
+<img width="743" height="180" alt="build-docker image" src="https://github.com/user-attachments/assets/f7f3c58b-e3cd-4bc8-abde-aa97e79bc0b5" />
+
+
+<img width="728" height="164" alt="push-image" src="https://github.com/user-attachments/assets/27888237-2e8c-4420-bfa3-df740ce4e324" />
+
+
 ### **Set Up ECS Cluster with Fargate**
 ### Atach an IAM policy to your user or role that grants the necessary permissions to work with ECS clusters.
 -Go to the `IAM Console`: Log in to your AWS Management Console and navigate to the `IAM service.`
 -Find your `user`: In the left navigation pane, click on `Users`, then select your `user`
 -Attach a policy: In the Permissions tab for your user, click `Add permissions` > Attach policies directly.
 -Attach `AmazonECS_FullAccess`: In the search bar, type `AmazonECS_FullAccess`. This is a managed policy that gives you comprehensive permissions to manage all aspects of Amazon ECS. Select it and click `Add permissions`.
+
+<img width="891" height="165" alt="schedule from api gateway" src="https://github.com/user-attachments/assets/9c417fa1-6c43-467b-ae31-25d7f25489e1" />
+
 
 1. Create an ECS Cluster: `# infrastructure that is going to hold our container`
 - Go to the ECS Console → Clusters → Create Cluster
@@ -86,6 +95,9 @@ docker push <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/sports-api:sports-a
 - Go to Task Definitions → Create New Task Definition
 - Name your task definition (sports-api-task)
 - For Infrastructure, select Fargate
+
+  <img width="647" height="338" alt="creating cluster" src="https://github.com/user-attachments/assets/b08c3a9a-757a-496b-ae4d-7bc568d29c4c" />
+
 - Add the container:
   - Name your container (sports-api-container)
   - Image URI: <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/sports-api:sports-api-latest
@@ -107,26 +119,43 @@ docker push <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/sports-api:sports-a
 - Networking Configuration:
   - Type: All TCP
   - Source: Anywhere
+ 
 - Load Balancing: Select Application Load Balancer (ALB).
 - ALB Configuration:
  - Create a new ALB:
  - Name: sports-api-alb
  - Target Group health check path: "/sports"
  - Create service
+   
+<img width="914" height="425" alt="laod-balacer" src="https://github.com/user-attachments/assets/1fe978d1-fd04-466b-9bcf-55c53c3e0c60" />
+
+   
 4. Test the ALB:
 - After deploying the ECS service, note the DNS name of the ALB (e.g., sports-api-alb-<AWS_ACCOUNT_ID>.us-east-1.elb.amazonaws.com)
 - Confirm the API is accessible by visiting the ALB DNS name in your browser and adding /sports at end (e.g, http://sports-api-alb-<AWS_ACCOUNT_ID>.us-east-1.elb.amazonaws.com/sports)
+  
+<img width="495" height="476" alt="sport-schedule" src="https://github.com/user-attachments/assets/cdf1aa05-b8a9-4ac6-ba88-feb47bb08411" />
+
+  
 
 ### **Configure API Gateway**
 1. Create a New REST API:
 - Go to API Gateway Console → Create API → REST API
 - Name the API (e.g., Sports API Gateway)
+  
+<img width="628" height="287" alt="Create API gate way" src="https://github.com/user-attachments/assets/2ef2ef86-60ff-464a-a528-6d18e79844d4" />
+
+  
 
 2. Set Up Integration:
 - Create a resource /sports
 - Create a GET method
 - Choose HTTP Proxy as the integration type
 - Enter the DNS name of the ALB that includes "/sports" (e.g. http://sports-api-alb-<AWS_ACCOUNT_ID>.us-east-1.elb.amazonaws.com/sports
+  
+<img width="715" height="353" alt="resources" src="https://github.com/user-attachments/assets/b2907a16-c64a-4725-b75d-955bec7a4d08" />
+
+
 
 3. Deploy the API:
 - Deploy the API to a stage (e.g., prod)
@@ -137,6 +166,8 @@ docker push <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/sports-api:sports-a
 ```bash
 curl https://<api-gateway-id>.execute-api.us-east-1.amazonaws.com/prod/sports
 ```
+
+<img width="891" height="165" alt="schedule from api gateway" src="https://github.com/user-attachments/assets/afee6963-cda5-47d6-ac5f-216a8c6bf963" />
 
 ### **What We Learned**
 Setting up a scalable, containerized application with ECS
