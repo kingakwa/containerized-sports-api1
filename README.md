@@ -71,12 +71,18 @@ docker push <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/sports-api:sports-a
 ```
 
 ### **Set Up ECS Cluster with Fargate**
-1. Create an ECS Cluster:
+### Atach an IAM policy to your user or role that grants the necessary permissions to work with ECS clusters.
+-Go to the `IAM Console`: Log in to your AWS Management Console and navigate to the `IAM service.`
+-Find your `user`: In the left navigation pane, click on `Users`, then select your `user`
+-Attach a policy: In the Permissions tab for your user, click `Add permissions` > Attach policies directly.
+-Attach `AmazonECS_FullAccess`: In the search bar, type `AmazonECS_FullAccess`. This is a managed policy that gives you comprehensive permissions to manage all aspects of Amazon ECS. Select it and click `Add permissions`.
+
+1. Create an ECS Cluster: `# infrastructure that is going to hold our container`
 - Go to the ECS Console → Clusters → Create Cluster
 - Name your Cluster (sports-api-cluster)
 - For Infrastructure, select Fargate, then create Cluster
 
-2. Create a Task Definition:
+2. Create a Task Definition: `#a single unit or container that perform a specific job`
 - Go to Task Definitions → Create New Task Definition
 - Name your task definition (sports-api-task)
 - For Infrastructure, select Fargate
